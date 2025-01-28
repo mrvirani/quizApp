@@ -8,13 +8,15 @@ import RegisterScreen from '../screens/Auth/RegisterScreen';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/Dashboard/HomeScreen';
 import OnBoardingScreen from '../screens/OnBoarding/OnBoardingScreen';
+import ForgotPasswordScreen from '../screens/Auth/ForgotPasswordScreen';
+import SearchScreen from '../screens/Dashboard/SearchScreen';
 
 const BottomTab = createBottomTabNavigator();
 export const BottomTabScreen = () => {
   return (
-    <BottomTab.Navigator screenOptions={{headerShown: false}}>
+    <BottomTab.Navigator screenOptions={{headerShown: false}} initialRouteName='HomeScreen'>
       <BottomTab.Screen name="HomeScreen" component={HomeScreen} />
-      {/* <BottomTab.Screen name="Home123" component={HomeScreen} /> */}
+      <BottomTab.Screen name="SearchScreen" component={SearchScreen} />
     </BottomTab.Navigator>
   );
 };
@@ -29,6 +31,7 @@ export const AuthStackScreen = () => {
       <AuthStack.Screen name="OnBoardingScreen" component={OnBoardingScreen} />
       <AuthStack.Screen name="LoginScreen" component={LoginScreen} />
       <AuthStack.Screen name="RegisterScreen" component={RegisterScreen} />
+      <AuthStack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen} />
     </AuthStack.Navigator>
   );
 };

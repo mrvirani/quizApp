@@ -1,128 +1,187 @@
-// import React from 'react';
-// import PaperOnboarding, {
-//   PaperOnboardingItemType,
-// } from '@gorhom/paper-onboarding';
-// import {View, Text, Image} from 'react-native';
+import React, { useRef } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  FlatList,
+  TouchableOpacity,
+  Animated,
+  Image,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import GradientScreen from '../../components/organism/GradientScreen';
 
-// const data = [
-//   {
-//     title: 'Welcome to QuizMaster!',
-//     description: 'Test your knowledge with fun and challenging quizzes!',
-//     backgroundColor: '#FF6F61',
-//     image: (
-//       <Image
-//         source={{uri: 'https://picsum.photos/200/300'}}
-//         style={{width: 200, height: 200}}
-//       />
-//     ),
-//     icon: (
-//       <Image
-//         source={{uri: 'https://picsum.photos/200/300'}}
-//         style={{width: 50, height: 50}}
-//       />
-//     ),
-//     content: (
-//       <View>
-//         <Text
-//           style={{
-//             fontSize: 16,
-//             color: '#fff',
-//             textAlign: 'center',
-//             marginTop: 10,
-//           }}>
-//           Swipe to learn how it works!
-//         </Text>
-//       </View>
-//     ),
-//   },
-//   {
-//     title: 'Choose Your Topic',
-//     description:
-//       'Select from a wide variety of topics to start your quiz journey.',
-//     backgroundColor: '#4CAF50',
-//     image: (
-//       <Image
-//         source={{uri: 'https://picsum.photos/200/300'}}
-//         style={{width: 200, height: 200}}
-//       />
-//     ),
-//     icon: (
-//       <Image
-//         source={{uri: 'https://picsum.photos/200/300'}}
-//         style={{width: 50, height: 50}}
-//       />
-//     ),
-//     content: (
-//       <View>
-//         <Text
-//           style={{
-//             fontSize: 16,
-//             color: '#fff',
-//             textAlign: 'center',
-//             marginTop: 10,
-//           }}>
-//           Find topics ranging from Science to Pop Culture!
-//         </Text>
-//       </View>
-//     ),
-//   },
-//   {
-//     title: 'Compete & Win',
-//     description: 'Challenge friends and climb the leaderboard!',
-//     backgroundColor: '#2196F3',
-//     image: (
-//       <Image
-//         source={{uri: 'https://picsum.photos/200/300'}}
-//         style={{width: 200, height: 200}}
-//       />
-//     ),
-//     icon: (
-//       <Image
-//         source={{uri: 'https://picsum.photos/200/300'}}
-//         style={{width: 50, height: 50}}
-//       />
-//     ),
-//     content: (
-//       <View>
-//         <Text
-//           style={{
-//             fontSize: 16,
-//             color: '#fff',
-//             textAlign: 'center',
-//             marginTop: 10,
-//           }}>
-//           Stay motivated by earning points and badges.
-//         </Text>
-//       </View>
-//     ),
-//   },
-// ];
-
-// const OnBoardingScreen = ({navigation}) => {
-//   const handleOnClosePress = () => {
-//     console.log('Navigating to login screen');
-//     navigation.replace('LoginScreen'); // Replace with your login screen navigation logic
-//   };
-
-//   return (
-//     <PaperOnboarding data={data} onCloseButtonPress={handleOnClosePress} />
-//   );
-// };
-
-// export default OnBoardingScreen;
+const { width, height } = Dimensions.get('window');
+const slides = [
+  {
+    id: '1',
+    title: 'Welcome to Speedy Browser',
+    description: 'Experience fast and secure browsing at your fingertips.',
+    image: 'https://picsum.photos/200/300?random=4', // Replace with a relevant image URL for a browser app.
+  },
+  {
+    id: '2',
+    title: 'Browse Privately',
+    description: 'Enjoy complete privacy with built-in incognito mode.',
+    image: 'https://picsum.photos/200/300?random=5', // Replace with a relevant image URL for privacy.
+  },
+  {
+    id: '3',
+    title: 'Sync Across Devices',
+    description: 'Access your bookmarks and history anywhere, anytime.',
+    image: 'https://picsum.photos/200/300?random=6', // Replace with a relevant image URL for synchronization.
+  },
+  {
+    id: '4',
+    title: 'Save Data and Time',
+    description: 'Compress web pages and save your mobile data.',
+    image: 'https://picsum.photos/200/300?random=7', // Replace with a relevant image URL for data-saving.
+  },
+];
 
 
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+export default function OnboardingScreen() {
+  const navigation = useNavigation();
+  const scrollX = useRef(new Animated.Value(0)).current;
 
-const OnBoardingScreen = () => {
-  return (
-    <View>
-      <Text>OnBoardingScreen</Text>
+  const renderItem = ({ item }) => (
+    <View style={[styles.slide, { width }]}>
+      <Image source={{ uri: item.image }} style={styles.image} />
+      <Text style={styles.title}>{item.title}</Text>
+      <Text style={styles.description}>{item.description}</Text>
     </View>
-  )
+  );
+
+  const Pagination = () => {
+    return (
+      <View style={styles.pagination}>
+        {slides.map((_, index) => {
+          const inputRange = [(index - 1) * width, index * width, (index + 1) * width];
+          const dotWidth = scrollX.interpolate({
+            inputRange,
+            outputRange: [8, 16, 8],
+            extrapolate: 'clamp',
+          });
+
+          const opacity = scrollX.interpolate({
+            inputRange,
+            outputRange: [0.3, 1, 0.3],
+            extrapolate: 'clamp',
+          });
+
+          return (
+            <Animated.View
+              key={index.toString()}
+              style={[styles.dot, { width: dotWidth, opacity }]}
+            />
+          );
+        })}
+      </View>
+    );
+  };
+
+  const handleSkip = () => {
+    navigation.navigate('LoginScreen');
+  };
+
+  const handleDone = () => {
+    navigation.navigate('LoginScreen');
+  };
+
+  return (
+    <GradientScreen style={styles.container}>
+      <Animated.FlatList
+        data={slides} 
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        pagingEnabled
+        bounces={false}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+          { useNativeDriver: false }
+        )}
+      />
+      <Pagination />
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={handleSkip} style={[styles.button, styles.skipButton]}>
+          <Text style={styles.buttonText}>Skip</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleDone} style={styles.button}>
+          <Text style={styles.buttonText}>Done</Text>
+        </TouchableOpacity>
+      </View>
+    </GradientScreen>
+  );
 }
 
-export default OnBoardingScreen
-
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFF',
+  },
+  slide: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginTop: -50
+  },
+  image: {
+    width: width * 0.8,
+    height: height * 0.5,
+    resizeMode: 'cover',
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#333',
+    marginBottom: 10,
+  },
+  description: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#666',
+    paddingHorizontal: 10,
+  },
+  pagination: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: 100,
+    width: '100%',
+  },
+  dot: {
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'black',
+    marginHorizontal: 4,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    position: 'absolute',
+    bottom: 40,
+    width: '100%',
+  },
+  button: {
+    backgroundColor: 'black',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  skipButton: {
+    backgroundColor: 'gray',
+  },
+  buttonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});
